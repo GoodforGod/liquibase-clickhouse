@@ -2,7 +2,7 @@
  * #%L
  * Liquibase extension for ClickHouse
  * %%
- * Copyright (C) 2020 - 2021 Mediarithmics
+ * Copyright (C) 2020 - 2022 Mediarithmics
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class TagDatabaseGeneratorClickhouse extends TagDatabaseGenerator {
               + dateColumnNameEscaped
               + " DESC, "
               + orderColumnNameEscaped
-              + " DESC LIMIT 1)")
+              + " DESC LIMIT 1) SETTINGS mutations_sync = 1")
     };
   }
 }

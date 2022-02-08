@@ -2,7 +2,7 @@
  * #%L
  * Liquibase extension for Clickhouse
  * %%
- * Copyright (C) 2020 Mediarithmics
+ * Copyright (C) 2020 - 2022 Mediarithmics
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@
 package liquibase.ext.clickhouse.sqlgenerator;
 
 import liquibase.ext.clickhouse.database.ClickHouseDatabase;
-
-import liquibase.database.Database;
 import liquibase.ext.clickhouse.params.ClusterConfig;
 import liquibase.ext.clickhouse.params.ParamsLoader;
+
+import liquibase.database.Database;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.InitializeDatabaseChangeLogLockTableGenerator;
@@ -52,15 +52,15 @@ public class InitializeDatabaseChangeLogLockClickHouse
 
     String clearDatabaseQuery =
         String.format(
-            "ALTER TABLE %s.%s "
+            "ALTER TABLE `%s`.%s "
                 + SqlGeneratorUtil.generateSqlOnClusterClause(properties)
-                + "DELETE WHERE 1",
+                + "DELETE WHERE 1 SETTINGS mutations_sync = 1",
             database.getDefaultSchemaName(),
             database.getDatabaseChangeLogLockTableName());
 
     String initLockQuery =
         String.format(
-            "INSERT INTO %s.%s (ID, LOCKED) VALUES (1, 0)",
+            "INSERT INTO `%s`.%s (ID, LOCKED) VALUES (1, 0)",
             database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
 
     return SqlGeneratorUtil.generateSql(database, clearDatabaseQuery, initLockQuery);

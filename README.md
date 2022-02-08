@@ -15,7 +15,7 @@ Maven dependency:
 </dependency>
 ```
 
-The cluster mode can be activated by adding the **_liquibaseClickhouse.conf_** file to the classpath (liquibase/lib/).
+The cluster mode can be activated by adding the **_liquibaseClickhouse.conf_** file to resources.
 ```
 cluster {
     clusterName="{cluster}"
