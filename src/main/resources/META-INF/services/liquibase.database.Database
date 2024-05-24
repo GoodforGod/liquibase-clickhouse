@@ -1,1 +1,1 @@
-liquibase.ext.clickhouse.database.ClickHouseDatabase
+io.goodforgod.liquibase.extension.clickhouse.database.ClickHouseDatabase
