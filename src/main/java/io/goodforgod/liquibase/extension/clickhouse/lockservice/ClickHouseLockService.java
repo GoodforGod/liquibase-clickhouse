@@ -1,6 +1,6 @@
-
 package io.goodforgod.liquibase.extension.clickhouse.lockservice;
 
+import io.goodforgod.liquibase.extension.clickhouse.database.ClickHouseDatabase;
 import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.exception.DatabaseException;
@@ -8,7 +8,6 @@ import liquibase.exception.LiquibaseException;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
-import io.goodforgod.liquibase.extension.clickhouse.database.ClickHouseDatabase;
 import liquibase.lockservice.StandardLockService;
 import liquibase.logging.Logger;
 import liquibase.statement.core.RawSqlStatement;

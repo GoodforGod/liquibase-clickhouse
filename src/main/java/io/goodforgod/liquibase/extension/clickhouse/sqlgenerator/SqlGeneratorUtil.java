@@ -1,9 +1,8 @@
-
 package io.goodforgod.liquibase.extension.clickhouse.sqlgenerator;
 
+import io.goodforgod.liquibase.extension.clickhouse.params.ClusterConfig;
 import java.util.*;
 import liquibase.database.Database;
-import io.goodforgod.liquibase.extension.clickhouse.params.ClusterConfig;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.core.RawSqlStatement;
