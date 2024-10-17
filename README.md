@@ -61,6 +61,6 @@ Your updates should also affect the entire cluster either by using ON CLUSTER cl
 
 ## License
 
-Based on [MEDIARITHMICS/liquibase-clickhouse](https://github.com/mediarithmics/liquibase-clickhouse) and 
+Based on [MEDIARITHMICS/liquibase-clickhouse](https://github.com/mediarithmics/liquibase-clickhouse) 
 
 This project licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
