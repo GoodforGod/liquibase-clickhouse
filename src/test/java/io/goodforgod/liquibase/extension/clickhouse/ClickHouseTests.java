@@ -20,7 +20,6 @@
 package io.goodforgod.liquibase.extension.clickhouse;
 
 import java.sql.Connection;
-
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -37,7 +36,7 @@ import org.testcontainers.shaded.org.apache.commons.io.output.NullWriter;
 public class ClickHouseTests {
 
     @Container
-    private static ClickHouseContainer clickHouseContainer = new ClickHouseContainer("clickhouse/clickhouse-server:22.3.8.39");
+    private static ClickHouseContainer clickHouseContainer = new ClickHouseContainer("clickhouse/clickhouse-server:22.3");
 
     @Test
     void canInitializeLiquibaseSchema() {
@@ -96,8 +95,7 @@ public class ClickHouseTests {
 
     @Test
     void canReportStatus() {
-        runLiquibase(
-                "changelog.xml",
+        runLiquibase("changelog.xml",
                 (liquibase, database) -> liquibase.reportStatus(true, "", new NullWriter()));
     }
 
@@ -106,21 +104,31 @@ public class ClickHouseTests {
         runLiquibase("changelog.xml", (liquibase, database) -> liquibase.markNextChangeSetRan(""));
     }
 
-    private void runLiquibase(
-                              String changelog,
-                              ThrowingBiConsumer<Liquibase, Database> liquibaseAction) {
-        DatabaseFactory dbFactory = DatabaseFactory.getInstance();
-        ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
-
-        try {
-            Connection connection = clickHouseContainer.createConnection("");
+    private void runLiquibase(String changelog, ThrowingBiConsumer<Liquibase, Database> liquibaseAction) {
+        try (Connection connection = clickHouseContainer.createConnection("")) {
             JdbcConnection jdbcConnection = new JdbcConnection(connection);
+            DatabaseFactory dbFactory = DatabaseFactory.getInstance();
+            ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
             Database database = dbFactory.findCorrectDatabaseImplementation(jdbcConnection);
             Liquibase liquibase = new Liquibase(changelog, resourceAccessor, database);
             liquibaseAction.accept(liquibase, database);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void runConnection(ConnectionConsumer<Connection> connectionConsumer) {
+        try (Connection connection = clickHouseContainer.createConnection("")) {
+            connectionConsumer.accept(connection);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FunctionalInterface
+    private interface ConnectionConsumer<T> {
+
+        void accept(T value) throws Exception;
     }
 
     @FunctionalInterface

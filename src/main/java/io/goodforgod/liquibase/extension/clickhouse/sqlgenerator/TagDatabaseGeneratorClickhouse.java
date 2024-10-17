@@ -1,11 +1,10 @@
-
 package io.goodforgod.liquibase.extension.clickhouse.sqlgenerator;
 
-import liquibase.database.Database;
-import liquibase.datatype.DataTypeFactory;
 import io.goodforgod.liquibase.extension.clickhouse.database.ClickHouseDatabase;
 import io.goodforgod.liquibase.extension.clickhouse.params.ClusterConfig;
 import io.goodforgod.liquibase.extension.clickhouse.params.ParamsLoader;
+import liquibase.database.Database;
+import liquibase.datatype.DataTypeFactory;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
@@ -26,8 +25,7 @@ public class TagDatabaseGeneratorClickhouse extends TagDatabaseGenerator {
     }
 
     @Override
-    public Sql[] generateSql(
-                             TagDatabaseStatement statement,
+    public Sql[] generateSql(TagDatabaseStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         String tableNameEscaped = database.escapeTableName(

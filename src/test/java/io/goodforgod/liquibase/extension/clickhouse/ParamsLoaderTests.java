@@ -1,4 +1,3 @@
-
 package io.goodforgod.liquibase.extension.clickhouse;
 
 import io.goodforgod.liquibase.extension.clickhouse.params.ClusterConfig;

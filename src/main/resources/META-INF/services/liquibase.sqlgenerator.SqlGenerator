@@ -7,3 +7,5 @@ io.goodforgod.liquibase.extension.clickhouse.sqlgenerator.ModifyDataTypeClickHou
 io.goodforgod.liquibase.extension.clickhouse.sqlgenerator.RemoveChangeSetRanStatusClickHouse
 io.goodforgod.liquibase.extension.clickhouse.sqlgenerator.UpdateChangeSetChecksumClickHouse
 io.goodforgod.liquibase.extension.clickhouse.sqlgenerator.TagDatabaseGeneratorClickhouse
+io.goodforgod.liquibase.extension.clickhouse.sqlgenerator.UpdateGeneratorClickHouse
+io.goodforgod.liquibase.extension.clickhouse.sqlgenerator.MarkChangeSetRanGeneratorClickHouse

@@ -35,7 +35,7 @@ jobs:
         run: './gradlew classes'
 
       - name: Test
-        run: './gradlew test jacocoTestReport testCodeCoverageReport'
+        run: './gradlew test jacocoTestReport'
 
       - name: SonarQube
         if: matrix.java == '17'

@@ -1,12 +1,11 @@
-
 package io.goodforgod.liquibase.extension.clickhouse.sqlgenerator;
 
-import liquibase.ChecksumVersion;
-import liquibase.changelog.ChangeSet;
-import liquibase.database.Database;
 import io.goodforgod.liquibase.extension.clickhouse.database.ClickHouseDatabase;
 import io.goodforgod.liquibase.extension.clickhouse.params.ClusterConfig;
 import io.goodforgod.liquibase.extension.clickhouse.params.ParamsLoader;
+import liquibase.ChecksumVersion;
+import liquibase.changelog.ChangeSet;
+import liquibase.database.Database;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.UpdateChangeSetChecksumGenerator;
