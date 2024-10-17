@@ -20,22 +20,36 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 dependencies {
-    compileOnly 'com.clickhouse:clickhouse-jdbc:0.6.0-patch4'
+    compileOnly "com.clickhouse:clickhouse-jdbc:0.7.0"
+    compileOnly("com.clickhouse:clickhouse-http-client") {
+        version {
+            strictly "0.7.0"
+        }
+    }
 
-    api 'org.liquibase:liquibase-core:4.27.0'
+    api "org.liquibase:liquibase-core:4.29.2"
 
-    implementation 'org.lz4:lz4-java:1.8.0'
-    implementation 'com.typesafe:config:1.4.3'
+    implementation "org.lz4:lz4-java:1.8.0"
+    implementation "com.typesafe:config:1.4.3"
     implementation "org.apache.httpcomponents.client5:httpclient5:5.3.1"
 
-    testImplementation 'org.testcontainers:clickhouse:1.19.8'
-    testImplementation 'org.testcontainers:junit-jupiter:1.19.8'
+    testImplementation "org.testcontainers:clickhouse:1.19.8"
+    testRuntimeOnly "com.clickhouse:clickhouse-jdbc:0.7.0"
+    testRuntimeOnly("com.clickhouse:clickhouse-http-client") {
+        version {
+            strictly "0.7.0"
+        }
+    }
+
+    testImplementation "org.testcontainers:junit-jupiter:1.19.8"
+
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.1"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.1"
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.9.1"
 }
 
 test {
+    failFast(false)
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
@@ -44,8 +58,8 @@ test {
     }
 
     reports {
-        html.enabled(false)
-        junitXml.enabled(false)
+        html.required = false
+        junitXml.required = true
     }
 }
 
@@ -119,14 +133,14 @@ java {
 tasks.withType(JavaCompile) {
     options.encoding("UTF-8")
     options.incremental(true)
-    options.fork = true
+    options.fork = false
 }
 
 check.dependsOn jacocoTestReport
 jacocoTestReport {
     reports {
-        xml.enabled true
-        html.destination file("${buildDir}/jacocoHtml")
+        xml.required = true
+        html.destination(file("${buildDir}/jacocoHtml"))
     }
 }
 
