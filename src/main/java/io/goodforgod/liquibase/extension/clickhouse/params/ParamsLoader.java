@@ -69,10 +69,9 @@ public class ParamsLoader {
 
     public static ClusterConfig getLiquibaseClickhouseProperties(String configFile) {
         return liquibaseClickhouseProperties.computeIfAbsent(configFile, k -> {
-            Config conf = ConfigFactory.load(configFile);
-            Map<String, String> params = new HashMap<>();
-
             try {
+                Config conf = ConfigFactory.load(configFile);
+                Map<String, String> params = new HashMap<>();
                 for (Map.Entry<String, ConfigValue> s : conf.getConfig("cluster").entrySet())
                     params.put(s.getKey(), s.getValue().unwrapped().toString());
 
