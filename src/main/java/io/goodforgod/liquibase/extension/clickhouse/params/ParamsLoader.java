@@ -2,9 +2,7 @@ package io.goodforgod.liquibase.extension.clickhouse.params;
 
 import io.goodforgod.liquibase.extension.clickhouse.util.ResourceUtils;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import liquibase.Scope;
@@ -42,13 +40,6 @@ public class ParamsLoader {
         return missingProperties.toString();
     }
 
-    private static String getStackTrace(Exception e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return sw.toString();
-    }
-
     public static ClusterConfig getLiquibaseClickhouseProperties() {
         String propFile = Optional.ofNullable(System.getProperty("liquibaseClickhousePropertiesFile"))
                 .or(() -> Optional.ofNullable(System.getenv("LIQUIBASE_CLICKHOUSE_PROPERTIES_FILE")))
@@ -63,6 +54,7 @@ public class ParamsLoader {
             try {
                 Optional<String> propsAsString = ResourceUtils.getFileAsString(configFile);
                 if (propsAsString.isEmpty()) {
+                    logger.info("Clickhouse Cluster settings file not found, skipping cluster properties: " + configFile);
                     return null;
                 }
 

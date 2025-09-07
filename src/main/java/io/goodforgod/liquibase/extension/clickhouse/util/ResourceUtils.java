@@ -43,7 +43,7 @@ public final class ResourceUtils {
             }
 
             final String jarPath = url.getPath()
-                    .replaceFirst("[.]jar[!].*", ".jar")
+                    .replaceFirst("[.]jar!.*", ".jar")
                     .replaceFirst("file:", "")
                     .replace(" ", "\\ ");
 
