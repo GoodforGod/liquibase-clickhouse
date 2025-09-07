@@ -17,7 +17,7 @@ import liquibase.statement.core.RawSqlStatement;
 
 public class ClickHouseLockService extends StandardLockService {
 
-    private boolean isLockTableInitialized;
+    private volatile boolean isLockTableInitialized;
 
     @Override
     public int getPriority() {

@@ -27,7 +27,9 @@ public class UpdateGeneratorClickHouse extends UpdateGenerator {
     }
 
     @Override
-    public Sql[] generateSql(UpdateStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+    public Sql[] generateSql(UpdateStatement statement,
+                             Database database,
+                             SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();
 
         StringBuilder sb = new StringBuilder(
