@@ -36,7 +36,7 @@ import org.testcontainers.shaded.org.apache.commons.io.output.NullWriter;
 public class ClickHouseTests {
 
     @Container
-    private static ClickHouseContainer clickHouseContainer = new ClickHouseContainer("clickhouse/clickhouse-server:22.3");
+    private static ClickHouseContainer clickHouseContainer = new ClickHouseContainer("clickhouse/clickhouse-server:25.8-alpine");
 
     @Test
     void canInitializeLiquibaseSchema() {
