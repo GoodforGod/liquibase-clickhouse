@@ -7,13 +7,14 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.statement.SqlStatement;
-import liquibase.statement.core.RawSqlStatement;
+import liquibase.statement.core.RawParameterizedSqlStatement;
 
 public class ClickHouseDatabase extends AbstractJdbcDatabase {
 
     private static final String DATABASE_NAME = "ClickHouse";
     private static final int DEFAULT_PORT = 8123;
     private static final String DRIVER_CLASS_NAME = ClickHouseDriver.class.getName();
+
     public static final String CURRENT_DATE_TIME_FUNCTION = "toDateTime64('"
             + new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS").format(new Date())
             + "',3)";
@@ -77,6 +78,6 @@ public class ClickHouseDatabase extends AbstractJdbcDatabase {
 
     @Override
     protected SqlStatement getConnectionSchemaNameCallStatement() {
-        return new RawSqlStatement("SELECT currentDatabase()");
+        return new RawParameterizedSqlStatement("SELECT currentDatabase()");
     }
 }

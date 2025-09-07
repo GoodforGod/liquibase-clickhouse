@@ -9,9 +9,7 @@ import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.InitializeDatabaseChangeLogLockTableGenerator;
 import liquibase.statement.core.InitializeDatabaseChangeLogLockTableStatement;
 
-public class InitializeDatabaseChangeLogLockClickHouse
-        extends
-        InitializeDatabaseChangeLogLockTableGenerator {
+public class InitializeDatabaseChangeLogLockClickHouse extends InitializeDatabaseChangeLogLockTableGenerator {
 
     @Override
     public int getPriority() {
@@ -26,8 +24,7 @@ public class InitializeDatabaseChangeLogLockClickHouse
     }
 
     @Override
-    public Sql[] generateSql(
-                             InitializeDatabaseChangeLogLockTableStatement statement,
+    public Sql[] generateSql(InitializeDatabaseChangeLogLockTableStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();

@@ -24,8 +24,7 @@ public class UpdateChangeSetChecksumClickHouse extends UpdateChangeSetChecksumGe
     }
 
     @Override
-    public Sql[] generateSql(
-                             UpdateChangeSetChecksumStatement statement,
+    public Sql[] generateSql(UpdateChangeSetChecksumStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();

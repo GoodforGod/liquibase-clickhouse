@@ -3,16 +3,14 @@ package io.goodforgod.liquibase.extension.clickhouse.sqlgenerator;
 import io.goodforgod.liquibase.extension.clickhouse.database.ClickHouseDatabase;
 import io.goodforgod.liquibase.extension.clickhouse.params.ClusterConfig;
 import io.goodforgod.liquibase.extension.clickhouse.params.ParamsLoader;
-import java.util.*;
+import java.util.Locale;
 import liquibase.database.Database;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.CreateDatabaseChangeLogLockTableGenerator;
 import liquibase.statement.core.CreateDatabaseChangeLogLockTableStatement;
 
-public class CreateDatabaseChangeLogLockTableClickHouse
-        extends
-        CreateDatabaseChangeLogLockTableGenerator {
+public class CreateDatabaseChangeLogLockTableClickHouse extends CreateDatabaseChangeLogLockTableGenerator {
 
     @Override
     public int getPriority() {
@@ -25,8 +23,7 @@ public class CreateDatabaseChangeLogLockTableClickHouse
     }
 
     @Override
-    public Sql[] generateSql(
-                             CreateDatabaseChangeLogLockTableStatement statement,
+    public Sql[] generateSql(CreateDatabaseChangeLogLockTableStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();

@@ -23,8 +23,7 @@ public class RemoveChangeSetRanStatusClickHouse extends RemoveChangeSetRanStatus
     }
 
     @Override
-    public Sql[] generateSql(
-                             RemoveChangeSetRanStatusStatement statement,
+    public Sql[] generateSql(RemoveChangeSetRanStatusStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();

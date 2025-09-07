@@ -22,8 +22,7 @@ public class UnlockDatabaseChangelogClickHouse extends UnlockDatabaseChangeLogGe
     }
 
     @Override
-    public Sql[] generateSql(
-                             UnlockDatabaseChangeLogStatement statement,
+    public Sql[] generateSql(UnlockDatabaseChangeLogStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();
@@ -31,7 +30,7 @@ public class UnlockDatabaseChangelogClickHouse extends UnlockDatabaseChangeLogGe
         String unlockQuery = String.format(
                 "ALTER TABLE `%s`.%s "
                         + SqlGeneratorUtil.generateSqlOnClusterClause(properties)
-                        + "UPDATE LOCKED = 0,LOCKEDBY = null, LOCKGRANTED = null WHERE ID = 1 AND LOCKED = 1 SETTINGS mutations_sync = 1",
+                        + "UPDATE LOCKED = 0, LOCKEDBY = null, LOCKGRANTED = null WHERE ID = 1 AND LOCKED = 1 SETTINGS mutations_sync = 1",
                 database.getDefaultSchemaName(),
                 database.getDatabaseChangeLogLockTableName());
 

@@ -1,24 +1,26 @@
 package io.goodforgod.liquibase.extension.clickhouse.params;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigException;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigValue;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import io.goodforgod.liquibase.extension.clickhouse.util.ResourceUtils;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import liquibase.Scope;
+import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.logging.Logger;
 
 public class ParamsLoader {
 
-    private static final Logger LOG = Scope.getCurrentScope().getLog(ParamsLoader.class);
+    private ParamsLoader() {}
 
-    private static final Set<String> validProperties = new HashSet<>(
-            Arrays.asList("clusterName", "tableZooKeeperPathPrefix", "tableReplicaName"));
+    private static final Logger logger = Scope.getCurrentScope().getLog(ParamsLoader.class);
 
-    private static Map<String, ClusterConfig> liquibaseClickhouseProperties = new ConcurrentHashMap<>();
+    private static final Set<String> CLICKHOUSE_PROPERTIES = Set.of(
+            "clickhouse.cluster.clusterName",
+            "clickhouse.cluster.tableZooKeeperPathPrefix",
+            "clickhouse.cluster.tableReplicaName");
+
+    private static final Map<String, ClusterConfig> LIQUIBASE_CLICKHOUSE_PROPERTIES = new ConcurrentHashMap<>();
 
     private static StringBuilder appendWithComma(StringBuilder sb, String text) {
         if (sb.length() > 0) {
@@ -30,7 +32,7 @@ public class ParamsLoader {
 
     private static String getMissingProperties(Set<String> properties) {
         StringBuilder missingProperties = new StringBuilder();
-        for (String validProperty : validProperties)
+        for (String validProperty : CLICKHOUSE_PROPERTIES)
             if (!properties.contains(validProperty)) {
                 appendWithComma(missingProperties, validProperty);
             }
@@ -38,65 +40,89 @@ public class ParamsLoader {
         return missingProperties.toString();
     }
 
-    private static void checkProperties(Map<String, String> properties) throws InvalidPropertiesFormatException {
-        StringBuilder errMsg = new StringBuilder();
-
-        for (String key : properties.keySet())
-            if (!validProperties.contains(key)) {
-                appendWithComma(errMsg, "unknown property: ").append(key);
-            }
-
-        if (errMsg.length() > 0 || properties.size() != validProperties.size()) {
-            appendWithComma(errMsg, "the missing properties should be defined: ");
-            errMsg.append(getMissingProperties(properties.keySet()));
-        }
-
-        if (errMsg.length() > 0) {
-            throw new InvalidPropertiesFormatException(errMsg.toString());
-        }
-    }
-
-    private static String getStackTrace(Exception e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return sw.toString();
-    }
-
     public static ClusterConfig getLiquibaseClickhouseProperties() {
-        return getLiquibaseClickhouseProperties("liquibaseClickhouse");
+        String propFile = Optional.ofNullable(System.getProperty("liquibaseClickhousePropertiesFile"))
+                .or(() -> Optional.ofNullable(System.getenv("LIQUIBASE_CLICKHOUSE_PROPERTIES_FILE")))
+                .orElse("liquibaseClickhouse.properties");
+
+        return getLiquibaseClickhouseProperties(propFile);
     }
 
     public static ClusterConfig getLiquibaseClickhouseProperties(String configFile) {
-        return liquibaseClickhouseProperties.computeIfAbsent(configFile, k -> {
-            Config conf = ConfigFactory.load(configFile);
+        return LIQUIBASE_CLICKHOUSE_PROPERTIES.computeIfAbsent(configFile, k -> {
             Map<String, String> params = new HashMap<>();
-
             try {
-                for (Map.Entry<String, ConfigValue> s : conf.getConfig("cluster").entrySet())
-                    params.put(s.getKey(), s.getValue().unwrapped().toString());
+                Optional<String> propsAsString = ResourceUtils.getFileAsString(configFile);
+                if (propsAsString.isEmpty()) {
+                    logger.info("Clickhouse Cluster settings file not found, skipping cluster properties: " + configFile);
+                    return null;
+                }
 
-                checkProperties(params);
-                ClusterConfig result = new ClusterConfig(
-                        params.get("clusterName"),
-                        params.get("tableZooKeeperPathPrefix"),
-                        params.get("tableReplicaName"));
+                final Properties properties = new Properties();
+                properties.load(new StringReader(propsAsString.get()));
 
-                LOG.info("Cluster settings ("
+                for (String clickhouseProperty : CLICKHOUSE_PROPERTIES) {
+                    if (properties.getProperty(clickhouseProperty) == null) {
+                        throw new IllegalArgumentException(
+                                "Clickhouse Cluster Settings properties file missing property: " + clickhouseProperty);
+                    }
+                }
+
+                ClusterConfig clusterConfig = new ClusterConfig(
+                        getPropertyValue(properties, "clickhouse.cluster.clusterName"),
+                        getPropertyValue(properties, "clickhouse.cluster.tableZooKeeperPathPrefix"),
+                        getPropertyValue(properties, "clickhouse.cluster.tableReplicaName"));
+
+                logger.info("Clickhouse Cluster settings ("
                         + configFile
-                        + ".conf) are found. Work in cluster replicated clickhouse mode.");
-                return result;
-            } catch (ConfigException.Missing e) {
-                LOG.info("Cluster settings ("
+                        + ".conf) are found and processed correctly. Work in cluster replicated clickhouse mode.");
+                return clusterConfig;
+            } catch (IllegalArgumentException e) {
+                logger.severe("Clickhouse Cluster settings ("
                         + configFile
-                        + ".conf) are not defined. Work in single-instance clickhouse mode.");
-                LOG.info("The following properties should be defined: " + getMissingProperties(new HashSet<>()));
-                return null;
-            } catch (InvalidPropertiesFormatException e) {
-                LOG.severe(getStackTrace(e));
-                LOG.severe("Work in single-instance clickhouse mode.");
-                return null;
+                        + ".conf) are not defined properly. Work in single-instance clickhouse mode.", e);
+                logger.severe("The following properties should be defined: " + getMissingProperties(params.keySet()));
+                throw new UnexpectedLiquibaseException(e);
+            } catch (IOException e) {
+                logger.severe("Clickhouse Cluster Settings config file ("
+                        + configFile
+                        + ".conf) parse exception. Work in single-instance clickhouse mode.", e);
+                throw new UnexpectedLiquibaseException(e);
             }
         });
+    }
+
+    private static String getPropertyValue(Properties properties, String propertyName) {
+        String propertyValue = properties.getProperty(propertyName);
+        return getEnvValueOrSelf(propertyValue);
+    }
+
+    private static boolean isEnvironmentValue(String value) {
+        return value != null && value.startsWith("${") && value.endsWith("}");
+    }
+
+    private static String getEnvValueOrSelf(String envOrValue) {
+        if (isEnvironmentValue(envOrValue)) {
+            final String envProperty = envOrValue.substring(2, envOrValue.length() - 1);
+            final String[] environmentAndDefault = envProperty.split("\\|");
+
+            if (environmentAndDefault.length > 2) {
+                throw new IllegalArgumentException(
+                        "Property can contain only 1 ':' symbol but got: " + envProperty);
+            } else if (environmentAndDefault.length == 2) {
+                final String envValue = System.getenv(environmentAndDefault[0]);
+                if (envValue == null) {
+                    return (environmentAndDefault[1].isBlank())
+                            ? null
+                            : environmentAndDefault[1];
+                }
+
+                return envValue;
+            }
+
+            return System.getenv(environmentAndDefault[0]);
+        } else {
+            return envOrValue;
+        }
     }
 }
