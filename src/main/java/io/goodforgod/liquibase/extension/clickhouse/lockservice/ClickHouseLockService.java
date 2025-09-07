@@ -93,6 +93,7 @@ public class ClickHouseLockService extends StandardLockService {
                 if (rowsUpdated > 1) {
                     throw new LockException("Did not update change log lock correctly");
                 }
+
                 if (rowsUpdated == 0) {
                     // recheck on ID cause clickhouse driver v2 doesn't properly return executeUpdate/executeLargeUpdate
                     // updated rows in metadata

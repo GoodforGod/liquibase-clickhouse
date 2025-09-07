@@ -9,7 +9,6 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.clickhouse.ClickHouseContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.org.apache.commons.io.output.NullWriter;

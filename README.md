@@ -18,7 +18,7 @@ Supported operations:
 
 [**Gradle**](https://mvnrepository.com/artifact/io.goodforgod/liquibase-clickhouse)
 ```groovy
-implementation "io.goodforgod:liquibase-clickhouse:0.8.0"
+implementation "io.goodforgod:liquibase-clickhouse:0.9.0"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/io.goodforgod/liquibase-clickhouse)
@@ -26,33 +26,37 @@ implementation "io.goodforgod:liquibase-clickhouse:0.8.0"
 <dependency>
     <groupId>io.goodforgod</groupId>
     <artifactId>liquibase-clickhouse</artifactId>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
 </dependency>
 ```
 
-## Liquibase
+### Compatibility
 
-Supported Liquibase version [4.29.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core)
-
-## Driver
-
-Supported driver version [0.7.0+](https://mvnrepository.com/artifact/com.clickhouse/clickhouse-jdbc)
-
-```groovy
-implementation "com.clickhouse:clickhouse-jdbc:0.7.0"
-implementation("com.clickhouse:clickhouse-http-client") { version { strictly "0.7.0" } }
-```
+- Version 0.9.0+ - Liquibase [4.33.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.9.2+](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.9.2)
+- Version 0.8.0+ - Liquibase [4.29.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.7.0-0.7.2](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.7.2)
 
 ## Cluster
 
-The cluster mode can be activated by adding the `liquibaseClickhouse.conf` file to the classpath (liquibase/lib/).
+The cluster mode can be activated by adding the `liquibaseClickhouse.properties` file to the classpath (liquibase/lib/).
 
-```hocon
-cluster {
-    clusterName="{cluster}"
-    tableZooKeeperPathPrefix="/clickhouse/tables/{shard}/{database}/"
-    tableReplicaName="{replica}"
-}
+Property file path can be specified also via:
+- System property - `liquibaseClickhousePropertiesFile`
+- Environment variable - `LIQUIBASE_CLICKHOUSE_PROPERTIES_FILE`
+
+Properties file format:
+```properties
+# these are our cluster config values
+clickhouse.cluster.clusterName=Cluster1
+clickhouse.cluster.tableZooKeeperPathPrefix=Path1
+clickhouse.cluster.tableReplicaName=Replica1
+```
+
+You can also specify values in file via environment variables with default values:
+```properties
+# these are our cluster config values
+clickhouse.cluster.clusterName=${CLICKHOUSE_CLUSTER}
+clickhouse.cluster.tableZooKeeperPathPrefix=Path1
+clickhouse.cluster.tableReplicaName=${CLICKHOUSE_REPLICA_TABLE|defaultReplaceTableName}
 ```
 
 In this mode, liquibase will create its own tables as replicated.
