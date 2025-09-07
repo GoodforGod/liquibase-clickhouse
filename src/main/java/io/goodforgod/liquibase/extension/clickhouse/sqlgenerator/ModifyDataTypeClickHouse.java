@@ -24,8 +24,7 @@ public class ModifyDataTypeClickHouse extends ModifyDataTypeGenerator {
     }
 
     @Override
-    public Sql[] generateSql(
-                             ModifyDataTypeStatement statement,
+    public Sql[] generateSql(ModifyDataTypeStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         return new Sql[0];

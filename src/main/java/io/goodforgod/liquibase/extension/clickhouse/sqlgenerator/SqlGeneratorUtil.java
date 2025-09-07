@@ -1,11 +1,14 @@
 package io.goodforgod.liquibase.extension.clickhouse.sqlgenerator;
 
 import io.goodforgod.liquibase.extension.clickhouse.params.ClusterConfig;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import liquibase.database.Database;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
-import liquibase.statement.core.RawSqlStatement;
+import liquibase.statement.core.RawParameterizedSqlStatement;
 
 class SqlGeneratorUtil {
 
@@ -13,7 +16,7 @@ class SqlGeneratorUtil {
         SqlGeneratorFactory sqlGeneratorFactory = SqlGeneratorFactory.getInstance();
         List<Sql> allSqlStatements = new ArrayList<>();
         for (String statement : statements) {
-            RawSqlStatement rawSqlStatement = new RawSqlStatement(statement);
+            RawParameterizedSqlStatement rawSqlStatement = new RawParameterizedSqlStatement(statement);
             Sql[] perStatement = sqlGeneratorFactory.generateSql(rawSqlStatement, database);
             allSqlStatements.addAll(Arrays.asList(perStatement));
         }

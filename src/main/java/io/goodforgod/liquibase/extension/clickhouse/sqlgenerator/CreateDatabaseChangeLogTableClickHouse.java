@@ -23,8 +23,7 @@ public class CreateDatabaseChangeLogTableClickHouse extends CreateDatabaseChange
     }
 
     @Override
-    public Sql[] generateSql(
-                             CreateDatabaseChangeLogTableStatement statement,
+    public Sql[] generateSql(CreateDatabaseChangeLogTableStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();

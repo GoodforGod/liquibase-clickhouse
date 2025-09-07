@@ -1,6 +1,7 @@
 package io.goodforgod.liquibase.extension.clickhouse.lockservice;
 
 import io.goodforgod.liquibase.extension.clickhouse.database.ClickHouseDatabase;
+import io.goodforgod.liquibase.extension.clickhouse.statement.ClickhouseLockDatabaseChangeLogStatement;
 import liquibase.Scope;
 import liquibase.changelog.ChangeLogHistoryServiceFactory;
 import liquibase.database.Database;
@@ -12,8 +13,7 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.lockservice.StandardLockService;
 import liquibase.logging.Logger;
-import liquibase.statement.core.LockDatabaseChangeLogStatement;
-import liquibase.statement.core.RawSqlStatement;
+import liquibase.statement.core.RawParameterizedSqlStatement;
 
 public class ClickHouseLockService extends StandardLockService {
 
@@ -36,7 +36,7 @@ public class ClickHouseLockService extends StandardLockService {
                 String query = String.format(
                         "SELECT COUNT(*) FROM `%s`.%s",
                         database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
-                int nbRows = getExecutor().queryForInt(new RawSqlStatement(query));
+                int nbRows = getExecutor().queryForInt(new RawParameterizedSqlStatement(query));
                 isLockTableInitialized = nbRows > 0;
             } catch (LiquibaseException e) {
                 if (getExecutor().updatesDatabase()) {
@@ -55,7 +55,7 @@ public class ClickHouseLockService extends StandardLockService {
             try {
                 String query = String.format("SELECT ID FROM %s.%s LIMIT 1",
                         database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
-                getExecutor().execute(new RawSqlStatement(query));
+                getExecutor().execute(new RawParameterizedSqlStatement(query));
                 hasDatabaseChangeLogLockTable = true;
             } catch (DatabaseException e) {
                 getLogger().info(String.format("No %s table available", database.getDatabaseChangeLogLockTableName()));
@@ -82,21 +82,31 @@ public class ClickHouseLockService extends StandardLockService {
             String query = String.format(
                     "SELECT MAX(LOCKED) FROM %s.%s",
                     database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
-            boolean locked = executor.queryForInt(new RawSqlStatement(query)) > 0;
+            boolean locked = executor.queryForInt(new RawParameterizedSqlStatement(query)) > 0;
 
             if (locked) {
                 return false;
             } else {
                 executor.comment("Lock Database");
-                int rowsUpdated = executor.update(new LockDatabaseChangeLogStatement());
-
+                final ClickhouseLockDatabaseChangeLogStatement statement = new ClickhouseLockDatabaseChangeLogStatement();
+                int rowsUpdated = executor.update(statement);
                 if (rowsUpdated > 1) {
                     throw new LockException("Did not update change log lock correctly");
                 }
                 if (rowsUpdated == 0) {
-                    // another node was faster
-                    return false;
+                    // recheck on ID cause clickhouse driver v2 doesn't properly return executeUpdate/executeLargeUpdate
+                    // updated rows in metadata
+                    String lockedBy = executor.queryForObject(
+                            new RawParameterizedSqlStatement(String.format("SELECT LOCKEDBY FROM %s.%s",
+                                    database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName())),
+                            String.class);
+
+                    if (!lockedBy.equals(statement.getHost())) {
+                        // another node was faster
+                        return false;
+                    }
                 }
+
                 database.commit();
                 Scope.getCurrentScope()
                         .getLog(getClass())

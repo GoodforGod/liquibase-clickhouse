@@ -24,8 +24,7 @@ public class InitializeDatabaseChangeLogLockClickHouse extends InitializeDatabas
     }
 
     @Override
-    public Sql[] generateSql(
-                             InitializeDatabaseChangeLogLockTableStatement statement,
+    public Sql[] generateSql(InitializeDatabaseChangeLogLockTableStatement statement,
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();

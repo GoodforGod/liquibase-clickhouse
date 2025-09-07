@@ -7,7 +7,7 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.statement.SqlStatement;
-import liquibase.statement.core.RawSqlStatement;
+import liquibase.statement.core.RawParameterizedSqlStatement;
 
 public class ClickHouseDatabase extends AbstractJdbcDatabase {
 
@@ -78,6 +78,6 @@ public class ClickHouseDatabase extends AbstractJdbcDatabase {
 
     @Override
     protected SqlStatement getConnectionSchemaNameCallStatement() {
-        return new RawSqlStatement("SELECT currentDatabase()");
+        return new RawParameterizedSqlStatement("SELECT currentDatabase()");
     }
 }
