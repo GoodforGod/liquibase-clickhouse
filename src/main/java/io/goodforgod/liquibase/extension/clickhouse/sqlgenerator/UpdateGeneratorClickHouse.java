@@ -34,7 +34,7 @@ public class UpdateGeneratorClickHouse extends UpdateGenerator {
 
         StringBuilder sb = new StringBuilder(
                 String.format(
-                        "ALTER TABLE %s.%s " + SqlGeneratorUtil.generateSqlOnClusterClause(properties),
+                        "ALTER TABLE `%s`.`%s` " + SqlGeneratorUtil.generateSqlOnClusterClause(properties),
                         statement.getCatalogName(),
                         statement.getTableName()));
 

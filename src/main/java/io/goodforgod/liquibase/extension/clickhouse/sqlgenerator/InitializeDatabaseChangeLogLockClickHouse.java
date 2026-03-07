@@ -30,14 +30,14 @@ public class InitializeDatabaseChangeLogLockClickHouse extends InitializeDatabas
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();
 
         String clearDatabaseQuery = String.format(
-                "ALTER TABLE `%s`.%s "
+                "ALTER TABLE `%s`.`%s` "
                         + SqlGeneratorUtil.generateSqlOnClusterClause(properties)
                         + "DELETE WHERE 1 SETTINGS mutations_sync = 1",
                 database.getDefaultSchemaName(),
                 database.getDatabaseChangeLogLockTableName());
 
         String initLockQuery = String.format(
-                "INSERT INTO `%s`.%s (ID, LOCKED) VALUES (1, 0)",
+                "INSERT INTO `%s`.`%s` (ID, LOCKED) VALUES (1, 0)",
                 database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
 
         return SqlGeneratorUtil.generateSql(database, clearDatabaseQuery, initLockQuery);

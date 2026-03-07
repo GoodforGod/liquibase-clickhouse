@@ -1,7 +1,7 @@
 # Liquibase Clickhouse
 
 [![Minimum required Java version](https://img.shields.io/badge/Java-11%2B-blue?logo=openjdk)](https://openjdk.org/projects/jdk/11/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.goodforgod/liquibase-clickhouse/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.goodforgod/liquibase-clickhouse)
+[![Maven Central](https://img.shields.io/maven-central/v/io.goodforgod/liquibase-clickhouse.svg)](https://central.sonatype.com/artifact/io.goodforgod/liquibase-clickhouse)
 [![GitHub Action](https://github.com/goodforgod/liquibase-clickhouse/workflows/CI%20Master/badge.svg)](https://github.com/GoodforGod/liquibase-clickhouse/actions?query=workflow%3A"CI+Master"++)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_liquibase-clickhouse&metric=coverage)](https://sonarcloud.io/dashboard?id=GoodforGod_liquibase-clickhouse)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_liquibase-clickhouse&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=GoodforGod_liquibase-clickhouse)
@@ -18,7 +18,7 @@ Supported operations:
 
 [**Gradle**](https://mvnrepository.com/artifact/io.goodforgod/liquibase-clickhouse)
 ```groovy
-implementation "io.goodforgod:liquibase-clickhouse:0.9.0"
+implementation "io.goodforgod:liquibase-clickhouse:0.9.1"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/io.goodforgod/liquibase-clickhouse)
@@ -26,13 +26,13 @@ implementation "io.goodforgod:liquibase-clickhouse:0.9.0"
 <dependency>
     <groupId>io.goodforgod</groupId>
     <artifactId>liquibase-clickhouse</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1</version>
 </dependency>
 ```
 
 ### Compatibility
 
-- Version 0.9.0+ - Liquibase [4.33.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.9.2+](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.9.2)
+- Version 0.9.1+ - Liquibase [4.33.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.9.2+](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.9.2)
 - Version 0.8.0+ - Liquibase [4.29.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.7.0-0.7.2](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.7.2)
 
 ## Cluster
