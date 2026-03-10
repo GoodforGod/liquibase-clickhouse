@@ -42,7 +42,7 @@ public class ClickHouseLockService extends StandardLockService {
         if (!isLockTableInitialized) {
             try {
                 String query = String.format(
-                        "SELECT COUNT(*) FROM `%s`.%s",
+                        "SELECT COUNT(*) FROM `%s`.`%s`",
                         database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
                 int nbRows = getExecutor().queryForInt(new RawParameterizedSqlStatement(query));
                 isLockTableInitialized = nbRows > 0;
@@ -61,7 +61,7 @@ public class ClickHouseLockService extends StandardLockService {
     protected boolean isDatabaseChangeLogLockTableCreated(boolean forceRecheck) {
         if (forceRecheck || hasDatabaseChangeLogLockTable == null) {
             try {
-                String query = String.format("SELECT ID FROM %s.%s LIMIT 1",
+                String query = String.format("SELECT ID FROM `%s`.`%s` LIMIT 1",
                         database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
                 getExecutor().execute(new RawParameterizedSqlStatement(query));
                 hasDatabaseChangeLogLockTable = true;
@@ -88,7 +88,7 @@ public class ClickHouseLockService extends StandardLockService {
             this.init();
 
             String query = String.format(
-                    "SELECT MAX(LOCKED) FROM %s.%s",
+                    "SELECT MAX(LOCKED) FROM `%s`.`%s`",
                     database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName());
             boolean locked = executor.queryForInt(new RawParameterizedSqlStatement(query)) > 0;
 
@@ -106,7 +106,7 @@ public class ClickHouseLockService extends StandardLockService {
                     // recheck on ID cause clickhouse driver v2 doesn't properly return executeUpdate/executeLargeUpdate
                     // updated rows in metadata
                     String lockedBy = executor.queryForObject(
-                            new RawParameterizedSqlStatement(String.format("SELECT LOCKEDBY FROM %s.%s",
+                            new RawParameterizedSqlStatement(String.format("SELECT LOCKEDBY FROM `%s`.`%s`",
                                     database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName())),
                             String.class);
 
@@ -157,14 +157,14 @@ public class ClickHouseLockService extends StandardLockService {
                 if (updatedRows != 1) {
                     // 0 unlocked, 1 locked
                     Integer lockedStatus = executor.queryForObject(
-                            new RawParameterizedSqlStatement(String.format("SELECT LOCKED FROM %s.%s",
+                            new RawParameterizedSqlStatement(String.format("SELECT LOCKED FROM `%s`.`%s`",
                                     database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName())),
                             Integer.class);
 
                     if (!Integer.valueOf(0).equals(lockedStatus)) {
                         SqlStatement countStatement = new RawParameterizedSqlStatement(
-                                String.format("SELECT COUNT(*) FROM %s",
-                                        database.getDatabaseChangeLogLockTableName()));
+                                String.format("SELECT COUNT(*) FROM `%s`.`%s`",
+                                        database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName()));
 
                         throw new LockException(
                                 "Did not update change log lock correctly.\n\n" +

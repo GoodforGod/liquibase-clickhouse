@@ -43,10 +43,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Test Report
-        if: matrix.java == '17'
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: |
-            **/test-results/**/*.xml

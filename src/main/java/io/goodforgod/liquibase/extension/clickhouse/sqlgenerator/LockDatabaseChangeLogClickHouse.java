@@ -34,7 +34,7 @@ public class LockDatabaseChangeLogClickHouse extends AbstractSqlGenerator<Clickh
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();
 
-        String lockQuery = String.format("ALTER TABLE `%s`.%s %s\n" +
+        String lockQuery = String.format("ALTER TABLE `%s`.`%s` %s\n" +
                 "UPDATE LOCKED = 1, \n" +
                 "       LOCKEDBY = '%s', \n" +
                 "       LOCKGRANTED = %s \n" +

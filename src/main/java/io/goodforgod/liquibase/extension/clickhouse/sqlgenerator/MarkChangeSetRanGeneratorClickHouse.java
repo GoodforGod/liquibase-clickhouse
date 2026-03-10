@@ -61,7 +61,7 @@ public class MarkChangeSetRanGeneratorClickHouse extends MarkChangeSetRanGenerat
                 if (statement.getExecType().ranBefore) {
                     ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();
                     String updateQuery = String.format(
-                            "ALTER TABLE %s.%s "
+                            "ALTER TABLE `%s`.`%s` "
                                     + SqlGeneratorUtil.generateSqlOnClusterClause(properties)
                                     + "UPDATE COMMENTS = '%s', CONTEXTS = '%s', DATEEXECUTED = %s, DEPLOYMENT_ID = '%s', EXECTYPE = '%s', LABELS = '%s', MD5SUM = '%s', ORDEREXECUTED = %d "
                                     + (tag != null
