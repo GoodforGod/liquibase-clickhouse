@@ -63,6 +63,25 @@ In this mode, liquibase will create its own tables as replicated.
 All changes in these files will be replicated on the entire cluster.
 Your updates should also affect the entire cluster either by using ON CLUSTER clause, or by using replicated tables.
 
+## Mutations sync
+
+The `mutations_sync` setting applied to the lock statement defaults to `2`
+(wait for mutations on all replicas). It can be overridden (in order of precedence) via:
+- System property - `liquibaseClickhouse.mutationsSync`
+- Environment variable - `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC`
+
+Accepted values (see the ClickHouse `mutations_sync` setting):
+- `0` - mutation executes asynchronously, Liquibase does not wait for it to complete.
+- `1` - Liquibase waits for the mutation to complete on the current server only.
+- `2` - Liquibase waits for the mutation to complete on all replicas (default).
+
+Any invalid value falls back to the default `2`.
+
+For example, when building Liquibase programmatically you can set it before running the migration:
+```java
+System.setProperty("liquibaseClickhouse.mutationsSync", "1");
+```
+
 ## License
 
 Based on [MEDIARITHMICS/liquibase-clickhouse](https://github.com/mediarithmics/liquibase-clickhouse) 

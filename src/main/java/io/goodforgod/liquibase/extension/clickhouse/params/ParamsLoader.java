@@ -40,6 +40,50 @@ public class ParamsLoader {
         return missingProperties.toString();
     }
 
+    /**
+     * Resolves the {@code mutations_sync} setting value used when generating the lock statement.
+     * <p>
+     * The value can be configured (in order of precedence) via:
+     * <ul>
+     * <li>System property - {@code liquibaseClickhouse.mutationsSync}</li>
+     * <li>Environment variable - {@code LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC}</li>
+     * </ul>
+     * When nothing is configured the provided {@code defaultValue} is returned.
+     * <p>
+     * Accepted values (see the ClickHouse {@code mutations_sync} setting):
+     * <ul>
+     * <li>{@code 0} - mutation executes asynchronously, Liquibase does not wait for it to complete</li>
+     * <li>{@code 1} - Liquibase waits for the mutation to complete on the current server only</li>
+     * <li>{@code 2} - Liquibase waits for the mutation to complete on all replicas</li>
+     * </ul>
+     *
+     * @param defaultValue value returned when the setting is not configured
+     * @return the configured {@code mutations_sync} value or {@code defaultValue}
+     */
+    public static int getMutationsSync(int defaultValue) {
+        String value = Optional.ofNullable(System.getProperty("liquibaseClickhouse.mutationsSync"))
+                .or(() -> Optional.ofNullable(System.getenv("LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC")))
+                .orElse(null);
+
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+
+        try {
+            int parsed = Integer.parseInt(value.trim());
+            if (parsed < 0 || parsed > 2) {
+                throw new NumberFormatException("value out of range [0, 2]");
+            }
+            return parsed;
+        } catch (NumberFormatException e) {
+            logger.warning("Invalid Clickhouse 'mutations_sync' value '"
+                    + value
+                    + "', expected one of 0, 1, 2. Falling back to default: "
+                    + defaultValue);
+            return defaultValue;
+        }
+    }
+
     public static ClusterConfig getLiquibaseClickhouseProperties() {
         String propFile = Optional.ofNullable(System.getProperty("liquibaseClickhousePropertiesFile"))
                 .or(() -> Optional.ofNullable(System.getenv("LIQUIBASE_CLICKHOUSE_PROPERTIES_FILE")))
