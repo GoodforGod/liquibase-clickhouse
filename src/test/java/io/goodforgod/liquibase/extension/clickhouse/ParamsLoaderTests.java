@@ -23,4 +23,33 @@ public class ParamsLoaderTests {
         assertThrows(UnexpectedLiquibaseException.class,
                 () -> ParamsLoader.getLiquibaseClickhouseProperties("testLiquibaseClickhouseBroken.properties"));
     }
+
+    @Test
+    void mutationsSyncReturnsDefaultWhenNotConfigured() {
+        assertEquals(2, ParamsLoader.getMutationsSync(2));
+        assertEquals(1, ParamsLoader.getMutationsSync(1));
+    }
+
+    @Test
+    void mutationsSyncReadsSystemProperty() {
+        try {
+            System.setProperty("liquibaseClickhouse.mutationsSync", "0");
+            assertEquals(0, ParamsLoader.getMutationsSync(2));
+        } finally {
+            System.clearProperty("liquibaseClickhouse.mutationsSync");
+        }
+    }
+
+    @Test
+    void mutationsSyncFallsBackToDefaultOnInvalidValue() {
+        try {
+            System.setProperty("liquibaseClickhouse.mutationsSync", "not-a-number");
+            assertEquals(2, ParamsLoader.getMutationsSync(2));
+
+            System.setProperty("liquibaseClickhouse.mutationsSync", "5");
+            assertEquals(2, ParamsLoader.getMutationsSync(2));
+        } finally {
+            System.clearProperty("liquibaseClickhouse.mutationsSync");
+        }
+    }
 }
