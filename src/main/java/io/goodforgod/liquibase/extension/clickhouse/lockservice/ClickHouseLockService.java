@@ -110,7 +110,7 @@ public class ClickHouseLockService extends StandardLockService {
                                     database.getDefaultSchemaName(), database.getDatabaseChangeLogLockTableName())),
                             String.class);
 
-                    if (!lockedBy.equals(statement.getHost())) {
+                    if (null != lockedBy && !lockedBy.equals(statement.getHost())) {
                         // another node was faster
                         return false;
                     }
