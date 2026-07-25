@@ -33,7 +33,6 @@ public class LockDatabaseChangeLogClickHouse extends AbstractSqlGenerator<Clickh
                              Database database,
                              SqlGeneratorChain sqlGeneratorChain) {
         ClusterConfig properties = ParamsLoader.getLiquibaseClickhouseProperties();
-        int mutationsSync = ParamsLoader.getMutationsSync(2);
 
         String lockQuery = String.format("ALTER TABLE `%s`.`%s` %s\n" +
                 "UPDATE LOCKED = 1, \n" +
@@ -46,7 +45,7 @@ public class LockDatabaseChangeLogClickHouse extends AbstractSqlGenerator<Clickh
                 SqlGeneratorUtil.generateSqlOnClusterClause(properties),
                 statement.getHost(),
                 ClickHouseDatabase.CURRENT_DATE_TIME_FUNCTION,
-                mutationsSync);
+                properties.getMutationsSyncAcquire());
 
         return SqlGeneratorUtil.generateSql(database, lockQuery);
     }
