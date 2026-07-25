@@ -24,14 +24,14 @@ class SqlGeneratorUtil {
     }
 
     public static String generateSqlOnClusterClause(ClusterConfig properties) {
-        if (properties != null)
+        if (properties != null && properties.isClusterConfigured())
             return String.format("ON CLUSTER '%s' ", properties.getClusterName());
         else
             return " ";
     }
 
     public static String generateSqlEngineClause(ClusterConfig properties, String tableName) {
-        if (properties != null)
+        if (properties != null && properties.isClusterConfigured())
             return String.format(
                     "ENGINE ReplicatedMergeTree('%s','%s') ORDER BY ID",
                     properties.getTableZooKeeperPathPrefix() + tableName.toLowerCase(Locale.ROOT),

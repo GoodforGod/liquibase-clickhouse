@@ -16,6 +16,9 @@ public class ParamsLoaderTests {
         assertEquals("Cluster1", params.getClusterName());
         assertEquals("Path1", params.getTableZooKeeperPathPrefix());
         assertEquals("Replica1", params.getTableReplicaName());
+        assertEquals(2, params.getMutationsSyncAcquire());
+        assertEquals(1, params.getMutationsSyncRelease());
+        assertEquals(1, params.getMutationsSyncInit());
     }
 
     @Test
@@ -25,31 +28,29 @@ public class ParamsLoaderTests {
     }
 
     @Test
-    void mutationsSyncReturnsDefaultWhenNotConfigured() {
-        assertEquals(2, ParamsLoader.getMutationsSync(2));
-        assertEquals(1, ParamsLoader.getMutationsSync(1));
+    void loadDefaultsWithoutParamsFile() {
+        ClusterConfig params = ParamsLoader.getLiquibaseClickhouseProperties("missingLiquibaseClickhouse.properties");
+        assertNotNull(params);
+        assertNull(params.getClusterName());
+        assertNull(params.getTableZooKeeperPathPrefix());
+        assertNull(params.getTableReplicaName());
+        assertEquals(2, params.getMutationsSyncAcquire());
+        assertEquals(1, params.getMutationsSyncRelease());
+        assertEquals(1, params.getMutationsSyncInit());
     }
 
     @Test
-    void mutationsSyncReadsSystemProperty() {
-        try {
-            System.setProperty("liquibaseClickhouse.mutationsSync", "0");
-            assertEquals(0, ParamsLoader.getMutationsSync(2));
-        } finally {
-            System.clearProperty("liquibaseClickhouse.mutationsSync");
-        }
+    void mutationsSyncValuesReadPropertiesFile() {
+        ClusterConfig params = ParamsLoader.getLiquibaseClickhouseProperties("testLiquibaseClickhouseMutationsSync.properties");
+        assertEquals(0, params.getMutationsSyncAcquire());
+        assertEquals(0, params.getMutationsSyncRelease());
+        assertEquals(0, params.getMutationsSyncInit());
     }
 
     @Test
-    void mutationsSyncFallsBackToDefaultOnInvalidValue() {
-        try {
-            System.setProperty("liquibaseClickhouse.mutationsSync", "not-a-number");
-            assertEquals(2, ParamsLoader.getMutationsSync(2));
-
-            System.setProperty("liquibaseClickhouse.mutationsSync", "5");
-            assertEquals(2, ParamsLoader.getMutationsSync(2));
-        } finally {
-            System.clearProperty("liquibaseClickhouse.mutationsSync");
-        }
+    void mutationsSyncFailsOnInvalidValue() {
+        assertThrows(UnexpectedLiquibaseException.class,
+                () -> ParamsLoader
+                        .getLiquibaseClickhouseProperties("testLiquibaseClickhouseInvalidMutationsSync.properties"));
     }
 }

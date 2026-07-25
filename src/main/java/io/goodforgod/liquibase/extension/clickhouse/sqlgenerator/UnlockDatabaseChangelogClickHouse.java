@@ -30,9 +30,10 @@ public class UnlockDatabaseChangelogClickHouse extends UnlockDatabaseChangeLogGe
         String unlockQuery = String.format(
                 "ALTER TABLE `%s`.`%s` "
                         + SqlGeneratorUtil.generateSqlOnClusterClause(properties)
-                        + "UPDATE LOCKED = 0, LOCKEDBY = null, LOCKGRANTED = null WHERE ID = 1 AND LOCKED = 1 SETTINGS mutations_sync = 1",
+                        + "UPDATE LOCKED = 0, LOCKEDBY = null, LOCKGRANTED = null WHERE ID = 1 AND LOCKED = 1 SETTINGS mutations_sync = %s",
                 database.getDefaultSchemaName(),
-                database.getDatabaseChangeLogLockTableName());
+                database.getDatabaseChangeLogLockTableName(),
+                properties.getMutationsSyncRelease());
 
         return SqlGeneratorUtil.generateSql(database, unlockQuery);
     }

@@ -43,12 +43,20 @@ Property file path can be specified also via:
 - System property - `liquibaseClickhousePropertiesFile`
 - Environment variable - `LIQUIBASE_CLICKHOUSE_PROPERTIES_FILE`
 
+Configuration values are resolved in the following order:
+- Environment variable
+- Property from `liquibaseClickhouse.properties`
+- Default value
+
 Properties file format:
 ```properties
 # these are our cluster config values
 clickhouse.cluster.clusterName=Cluster1
 clickhouse.cluster.tableZooKeeperPathPrefix=Path1
 clickhouse.cluster.tableReplicaName=Replica1
+clickhouse.mutationsSyncAcquire=2
+clickhouse.mutationsSyncRelease=1
+clickhouse.mutationsSyncInit=1
 ```
 
 You can also specify values in file via environment variables with default values:
@@ -57,29 +65,51 @@ You can also specify values in file via environment variables with default value
 clickhouse.cluster.clusterName=${CLICKHOUSE_CLUSTER}
 clickhouse.cluster.tableZooKeeperPathPrefix=Path1
 clickhouse.cluster.tableReplicaName=${CLICKHOUSE_REPLICA_TABLE|defaultReplaceTableName}
+clickhouse.mutationsSyncAcquire=${CLICKHOUSE_MUTATIONS_SYNC_ACQUIRE|2}
+clickhouse.mutationsSyncRelease=${CLICKHOUSE_MUTATIONS_SYNC_RELEASE|1}
+clickhouse.mutationsSyncInit=${CLICKHOUSE_MUTATIONS_SYNC_INIT|1}
 ```
+
+All configuration values can also be passed directly via environment variables:
+- `LIQUIBASE_CLICKHOUSE_CLUSTER_NAME`
+- `LIQUIBASE_CLICKHOUSE_CLUSTER_TABLE_ZOOKEEPER_PATH_PREFIX`
+- `LIQUIBASE_CLICKHOUSE_CLUSTER_TABLE_REPLICA_NAME`
+- `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC_ACQUIRE`
+- `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC_RELEASE`
+- `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC_INIT`
 
 In this mode, liquibase will create its own tables as replicated.
 All changes in these files will be replicated on the entire cluster.
 Your updates should also affect the entire cluster either by using ON CLUSTER clause, or by using replicated tables.
 
-## Mutations sync
+## Lock mutations sync
 
-The `mutations_sync` setting applied to the lock statement defaults to `2`
-(wait for mutations on all replicas). It can be overridden (in order of precedence) via:
-- System property - `liquibaseClickhouse.mutationsSync`
-- Environment variable - `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC`
+The `mutations_sync` setting applied to lock table mutations can be overridden via:
+- Environment variables - `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC_ACQUIRE`,
+  `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC_RELEASE`, `LIQUIBASE_CLICKHOUSE_MUTATIONS_SYNC_INIT`
+- Properties - `clickhouse.mutationsSyncAcquire`, `clickhouse.mutationsSyncRelease`,
+  `clickhouse.mutationsSyncInit`
+
+Defaults:
+- `mutationsSyncAcquire=2` - lock acquire waits for mutations on all replicas.
+- `mutationsSyncRelease=1` - lock release waits for mutations on the current server only.
+- `mutationsSyncInit=1` - lock table init waits for mutations on the current server only.
 
 Accepted values (see the ClickHouse `mutations_sync` setting):
 - `0` - mutation executes asynchronously, Liquibase does not wait for it to complete.
 - `1` - Liquibase waits for the mutation to complete on the current server only.
 - `2` - Liquibase waits for the mutation to complete on all replicas (default).
 
-Any invalid value falls back to the default `2`.
+WARNING: `0` makes the Liquibase lock mutation asynchronous. Liquibase can continue before the
+`DATABASECHANGELOGLOCK` row is visibly locked, so concurrent Liquibase executions must be prevented externally.
 
-For example, when building Liquibase programmatically you can set it before running the migration:
-```java
-System.setProperty("liquibaseClickhouse.mutationsSync", "1");
+Any configured invalid value fails startup.
+
+For example, set it in `liquibaseClickhouse.properties`:
+```properties
+clickhouse.mutationsSyncAcquire=1
+clickhouse.mutationsSyncRelease=1
+clickhouse.mutationsSyncInit=1
 ```
 
 ## License
