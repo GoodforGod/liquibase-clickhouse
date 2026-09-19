@@ -1,0 +1,35 @@
+[versions]
+clickhouse = "0.10.0"
+liquibase = "5.0.4"
+httpclient5 = "5.6.4"
+testcontainers = "1.21.4"
+logback = "1.6.3"
+junit = "5.14.4"
+junit-platform = "1.14.4"
+
+sonarqube = "7.5.0.8588"
+spotless = "6.19.0"
+nexus-publish = "2.0.0"
+
+[libraries]
+clickhouse-jdbc = { module = "com.clickhouse:clickhouse-jdbc", version.ref = "clickhouse" }
+clickhouse-http-client = { module = "com.clickhouse:clickhouse-http-client", version = { strictly = "0.9.2" } }
+
+liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+
+httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient5" }
+
+testcontainers-clickhouse = { module = "org.testcontainers:clickhouse", version.ref = "testcontainers" }
+testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+
+[plugins]
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }

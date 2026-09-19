@@ -3,9 +3,9 @@ plugins {
     id "maven-publish"
     id "java-library"
 
-    id "org.sonarqube" version "6.3.1.5724"
-    id "com.diffplug.spotless" version "6.19.0"
-    id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
+    alias(libs.plugins.sonarqube)
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.nexus.publish)
 }
 
 repositories {
@@ -18,36 +18,27 @@ group = groupId
 var ver = System.getenv().getOrDefault("RELEASE_VERSION", artifactVersion)
 version = ver.startsWith("v") ? ver.substring(1) : ver
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
 
 dependencies {
-    compileOnly "com.clickhouse:clickhouse-jdbc:0.9.2"
-    compileOnly("com.clickhouse:clickhouse-http-client") {
-        version {
-            strictly "0.9.2"
-        }
-    }
+    compileOnly libs.clickhouse.jdbc
+    compileOnly libs.clickhouse.http.client
 
-    api "org.liquibase:liquibase-core:4.33.0"
+    api libs.liquibase.core
 
-    implementation "org.lz4:lz4-java:1.8.0"
-    implementation "org.apache.httpcomponents.client5:httpclient5:5.5"
+    // lz4 is not used directly; ClickHouse pulls in its own (relocated) lz4 fork.
+    implementation libs.httpclient5
 
-    testImplementation "org.testcontainers:clickhouse:1.21.3"
-    testRuntimeOnly "ch.qos.logback:logback-classic:1.5.0"
-    testRuntimeOnly "com.clickhouse:clickhouse-jdbc:0.9.2"
-    testRuntimeOnly("com.clickhouse:clickhouse-http-client") {
-        version {
-            strictly "0.9.2"
-        }
-    }
+    testImplementation libs.testcontainers.clickhouse
+    testRuntimeOnly libs.logback.classic
+    testRuntimeOnly libs.clickhouse.jdbc
+    testRuntimeOnly libs.clickhouse.http.client
 
-    testImplementation "org.testcontainers:junit-jupiter:1.21.3"
+    testImplementation libs.testcontainers.junit
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.11.4"
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.junit.api
+    testImplementation libs.junit.launcher
+    testImplementation libs.junit.params
 }
 
 test {
@@ -156,6 +147,8 @@ publishing {
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
 }
@@ -170,14 +163,14 @@ tasks.withType(JavaCompile) {
 // (used by the isolated fork-safe CI analysis workflow) can resolve types.
 tasks.register("copyScannerDeps", Copy) {
     from configurations.testRuntimeClasspath
-    into "$buildDir/scanner-deps"
+    into layout.buildDirectory.dir("scanner-deps")
 }
 
 check.dependsOn jacocoTestReport
 jacocoTestReport {
     reports {
         xml.required = true
-        html.destination(file("${buildDir}/jacocoHtml"))
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 }
 
