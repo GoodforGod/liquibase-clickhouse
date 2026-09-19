@@ -1,0 +1,41 @@
+name: CI Sonar Analysis
+
+# Runs after "CI Pull Request" completes. This workflow definition is always taken
+# from the default branch (trusted) and never checks out or executes any code from
+# the pull request, so it is safe to expose SONAR_TOKEN here even for fork PRs.
+on:
+  workflow_run:
+    workflows: [ "CI Pull Request" ]
+    types: [ completed ]
+
+permissions:
+  contents: read
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    name: SonarCloud analysis
+
+    steps:
+      - name: Download analysis input
+        uses: actions/download-artifact@v4
+        with:
+          name: sonar-analysis-input
+          path: .
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Read PR metadata
+        run: cat sonar-pr/pr.env >> "$GITHUB_ENV"
+
+      - name: SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}
+            -Dsonar.pullrequest.key=${{ env.PR_NUMBER }}
+            -Dsonar.pullrequest.branch=${{ env.PR_BRANCH }}
+            -Dsonar.pullrequest.base=${{ env.PR_BASE }}

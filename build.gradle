@@ -166,6 +166,13 @@ tasks.withType(JavaCompile) {
     options.fork = false
 }
 
+// Stages the test runtime classpath jars so the standalone SonarScanner CLI
+// (used by the isolated fork-safe CI analysis workflow) can resolve types.
+tasks.register("copyScannerDeps", Copy) {
+    from configurations.testRuntimeClasspath
+    into "$buildDir/scanner-deps"
+}
+
 check.dependsOn jacocoTestReport
 jacocoTestReport {
     reports {
