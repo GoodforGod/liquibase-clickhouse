@@ -32,9 +32,10 @@ public class InitializeDatabaseChangeLogLockClickHouse extends InitializeDatabas
         String clearDatabaseQuery = String.format(
                 "ALTER TABLE `%s`.`%s` "
                         + SqlGeneratorUtil.generateSqlOnClusterClause(properties)
-                        + "DELETE WHERE 1 SETTINGS mutations_sync = 1",
+                        + "DELETE WHERE 1 SETTINGS mutations_sync = %s",
                 database.getDefaultSchemaName(),
-                database.getDatabaseChangeLogLockTableName());
+                database.getDatabaseChangeLogLockTableName(),
+                properties.getMutationsSyncInit());
 
         String initLockQuery = String.format(
                 "INSERT INTO `%s`.`%s` (ID, LOCKED) VALUES (1, 0)",
