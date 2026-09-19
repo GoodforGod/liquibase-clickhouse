@@ -33,11 +33,12 @@ dependencies {
     testRuntimeOnly libs.clickhouse.jdbc
     testRuntimeOnly libs.clickhouse.http.client
 
-    testImplementation libs.testcontainers.junit.jupiter
+    testImplementation libs.testcontainers.junit
 
-    testRuntimeOnly libs.junit.jupiter.engine
-    testImplementation libs.junit.jupiter.api
-    testImplementation libs.junit.jupiter.params
+    testRuntimeOnly libs.junit.engine
+    testImplementation libs.junit.api
+    testImplementation libs.junit.launcher
+    testImplementation libs.junit.params
 }
 
 test {

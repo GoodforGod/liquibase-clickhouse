@@ -5,6 +5,7 @@ httpclient5 = "5.6.4"
 testcontainers = "1.21.4"
 logback = "1.6.3"
 junit = "5.14.4"
+junit-platform = "1.14.4"
 
 sonarqube = "7.5.0.8588"
 spotless = "6.19.0"
@@ -19,13 +20,14 @@ liquibase-core = { module = "org.liquibase:liquibase-core", version.ref = "liqui
 httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient5" }
 
 testcontainers-clickhouse = { module = "org.testcontainers:clickhouse", version.ref = "testcontainers" }
-testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-junit = { module = "org.testcontainers:junit", version.ref = "testcontainers" }
 
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-api = { module = "org.junit.jupiter:junit-api", version.ref = "junit" }
+junit-params = { module = "org.junit.jupiter:junit-params", version.ref = "junit" }
+junit-engine = { module = "org.junit.jupiter:junit-engine", version.ref = "junit" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 
 [plugins]
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }

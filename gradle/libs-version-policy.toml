@@ -13,4 +13,5 @@
 [version-levels]
 testcontainers = "minor"
 junit = "minor"
+junit-platform = "minor"
 spotless = "patch"
