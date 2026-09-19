@@ -18,7 +18,7 @@ Supported operations:
 
 [**Gradle**](https://mvnrepository.com/artifact/io.goodforgod/liquibase-clickhouse)
 ```groovy
-implementation "io.goodforgod:liquibase-clickhouse:0.9.1"
+implementation "io.goodforgod:liquibase-clickhouse:0.9.2"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/io.goodforgod/liquibase-clickhouse)
@@ -26,7 +26,7 @@ implementation "io.goodforgod:liquibase-clickhouse:0.9.1"
 <dependency>
     <groupId>io.goodforgod</groupId>
     <artifactId>liquibase-clickhouse</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
 </dependency>
 ```
 
