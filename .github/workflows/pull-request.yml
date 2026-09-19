@@ -61,6 +61,7 @@ jobs:
           name: sonar-analysis-input
           retention-days: 1
           path: |
+            sonar-project.properties
             src/main
             src/test
             build/classes/java/main
