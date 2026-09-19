@@ -25,7 +25,7 @@ dependencies {
 
     api libs.liquibase.core
 
-    implementation libs.lz4.java
+    // lz4 is not used directly; ClickHouse pulls in its own (relocated) lz4 fork.
     implementation libs.httpclient5
 
     testImplementation libs.testcontainers.clickhouse
@@ -146,8 +146,8 @@ publishing {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
 }
