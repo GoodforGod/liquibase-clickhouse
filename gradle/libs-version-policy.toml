@@ -1,0 +1,17 @@
+# Per-version update limits for gradle/update-libs-versions.gradle.
+#
+# Keys are names from the [versions] section in libs.versions.toml.
+# Inline versions can be limited with "inline:<lineNumber>" where lineNumber is 1-based
+# in libs.versions.toml, but prefer moving shared versions into [versions] first.
+#
+# Levels:
+# - any: allow any newer stable version
+# - major: allow major version changes
+# - minor: keep the current major version
+# - patch: keep the current major and minor version
+
+[version-levels]
+testcontainers = "minor"
+junit = "minor"
+junit-platform = "minor"
+spotless = "patch"
