@@ -32,9 +32,9 @@ implementation "io.goodforgod:liquibase-clickhouse:0.10.0"
 
 ### Compatibility
 
-- Version 0.10.0+ - Liquibase [5.0.4+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.10.0+](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.10.0)
-- Version 0.9.1+ - Liquibase [4.33.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.9.2+](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.9.2)
-- Version 0.8.0+ - Liquibase [4.29.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.7.0-0.7.2](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.7.2)
+- Version 0.10.0+ - Java 17+, Liquibase [5.0.4+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.10.0+](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.10.0)
+- Version 0.9.1+ - Java 11+, Liquibase [4.33.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.9.2+](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.9.2)
+- Version 0.8.0+ - Java 11+, Liquibase [4.29.0+](https://mvnrepository.com/artifact/org.liquibase/liquibase-core) and [clickhouse driver 0.7.0-0.7.2](https://github.com/ClickHouse/clickhouse-java/releases/tag/v0.7.2)
 
 ## Cluster
 
